@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>mainWindow</class>
+ <widget class="QMainWindow" name="mainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Inventory Control System</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="checkinButton">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>360</y>
+      <width>200</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CheckIn</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="checkoutButton">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>360</y>
+      <width>200</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CheckOut</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>591</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="zone8">
+       <property name="text">
+        <string>Zone8</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QCheckBox" name="zone3">
+       <property name="text">
+        <string>Zone3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="zone2">
+       <property name="text">
+        <string>Zone2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="zone5">
+       <property name="text">
+        <string>Zone5</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QCheckBox" name="zone6">
+       <property name="text">
+        <string>Zone6</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="zone4">
+       <property name="text">
+        <string>Zone4</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QCheckBox" name="zone7">
+       <property name="text">
+        <string>Zone7</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QCheckBox" name="zone9">
+       <property name="text">
+        <string>Zone9</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="zone1">
+       <property name="text">
+        <string>Zone1</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QCheckBox" name="zone0">
+       <property name="text">
+        <string>Zone0</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QCheckBox" name="zone10">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>270</y>
+      <width>85</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>All Zones</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionConnect"/>
+   </widget>
+   <addaction name="menuFile"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionConnect">
+   <property name="text">
+    <string>Connect To Database</string>
+   </property>
+  </action>
+ </widget>
+ <tabstops>
+  <tabstop>zone1</tabstop>
+  <tabstop>zone2</tabstop>
+  <tabstop>zone3</tabstop>
+  <tabstop>zone4</tabstop>
+  <tabstop>zone5</tabstop>
+  <tabstop>zone6</tabstop>
+  <tabstop>zone7</tabstop>
+  <tabstop>zone8</tabstop>
+  <tabstop>zone9</tabstop>
+  <tabstop>zone10</tabstop>
+  <tabstop>checkinButton</tabstop>
+  <tabstop>checkoutButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
