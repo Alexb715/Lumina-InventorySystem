@@ -17,30 +17,35 @@ mainWindow::mainWindow(QWidget *parent) :
 
 mainWindow::~mainWindow() {
     delete ui;
+    //if DB is connected it deletes database to make sure it is disconnected and memory allocation is properly handled
     if(database->connected()){
     delete database;}
 }
-
+ //opens login window and sends DB address to its pointer
 void mainWindow::on_actionConnect_triggered() {
     login = new loginwindow(nullptr);
+    //connects signals to properly send and receive
     connect(this,&mainWindow::SendDb, login,&loginwindow::receiveDB);
     connect(login,&loginwindow::loginClosed,this,&mainWindow::on_loginClosed);
     emit SendDb(database);
     login->show();
 
 }
-
+// when close signal is sent
 void mainWindow::on_loginClosed() {
+    //when close signal is sent disconnects proper channels
     disconnect(this,&mainWindow::SendDb, login,&loginwindow::receiveDB);
     disconnect(login,&loginwindow::loginClosed,this,&mainWindow::on_loginClosed);
     std::cout << "login Closed";
+    //set for window do be deleted for memory allocation
     login->deleteLater();
     if(database->connected()){
+        //updates status bar
     ui->statusbar->showMessage("Connected");
     }
 
 }
-
+//all zones work the same checks to mkake sure it is either checked or un checked
 void mainWindow::on_zone1_toggled(bool checked) {
     if(checked){
         std::cout << "zone 1 checked";
@@ -139,7 +144,7 @@ void mainWindow::on_zone9_toggled(bool checked) {
         zone[9]=0;
     }
 }
-
+//checks or unchecks all zones
 void mainWindow::on_zone10_toggled(bool checked) {
     if(checked){
         for(int i =0; i <10;i++){
@@ -162,13 +167,14 @@ void mainWindow::on_zone0_toggled(bool checked){
         zone[0]=0;
     }
 }
-
+//when checkin button is clicked
 void mainWindow::on_checkinButton_clicked() {
+    //make sure it is connected
     if(!database->connected()){
         ui->statusbar->showMessage("Error Not Connected to Database");
         return;
     }
-
+    //goes thru all zones to properly send the query for only the ones wanted
     for(int i = 0; i < 10; i++) {
         std::vector<std::string> Bindvalue{1};
         Bindvalue[0] = std::to_string(i);
@@ -184,7 +190,7 @@ void mainWindow::on_checkinButton_clicked() {
 }
 
 
-
+//same principle as checkin
 void mainWindow::on_checkoutButton_clicked() {
     std::vector<std::string> bindValues(2);
     if(!database->connected()){

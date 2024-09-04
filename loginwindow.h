@@ -25,11 +25,13 @@ private:
     DBController* DB;
     void delay(float n);
 public slots:
+    //fonction for wmit from mainwindow to receive db
     void receiveDB(DBController* DB);
 private slots:
     void on_connectButton_clicked();
     void on_cancelButton_clicked();
 signals:
+    //signal to tell mainwindow Login is closed
     void loginClosed();
 };
 

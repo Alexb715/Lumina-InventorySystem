@@ -9,8 +9,11 @@
 #define DATABASECONTROL_DATABASECONTROLLER_H
 class DBController{
 private:
+    //connection to DB
  MYSQL *connection;
+    //statement for query
  MYSQL_STMT *STMT;
+ //bind
  std::vector<MYSQL_BIND> bind;
  std::vector<int> intValues;        // Store integer values
  std::vector<float> floatValues;    // Store float values

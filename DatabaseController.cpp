@@ -29,7 +29,7 @@ DBController::~DBController() {
     std::cout << "disconnected";
 
 }
-
+//prepares the statement for Binding processe
 void DBController::prepareStatement(std::string Query) {
     if(mysql_stmt_prepare(STMT,Query.c_str(), strlen(Query.c_str())) == 0){
         return;
@@ -48,6 +48,7 @@ void DBController::bindStatement(){
     }
 }
 
+//prepares all the neede values for bind (only works with string floats and int for the moment
 void DBController::prepareBind(std::vector<std::string> Values){
     bind.clear(); // Clear existing binds if any
     intValues.clear();        // Clear existing integer values
@@ -91,21 +92,25 @@ void DBController::prepareBind(std::vector<std::string> Values){
                   << ", length = " << (bindEntry.length ? *bindEntry.length : 0)
                   << std::endl;
     }
+    //Proceeds to bind values to statement
     bindStatement();
 }
-
+//executes statements in DB
 void DBController::executeStatement() {
     if(mysql_stmt_execute(STMT)){
         std::cout<<"could not execute" << mysql_stmt_error(STMT) << mysql_error(connection) ;
     }
 
 }
+//make sure it is connected
 bool DBController::connected(){
     if(mysql_ping(connection)){
         return false;
     }
     return true;
 }
+
+
 bool isFloat(const std::string& str, float &number) {
     std::istringstream iss(str);
     char c;
