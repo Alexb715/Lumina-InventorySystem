@@ -1,0 +1,5 @@
+C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/CMakeFiles/Inventory.dir
+C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/CMakeFiles/Inventory_autogen_timestamp_deps.dir
+C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/CMakeFiles/Inventory_autogen.dir

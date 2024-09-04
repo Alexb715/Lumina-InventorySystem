@@ -1,0 +1,35 @@
+# ninja log v5
+106	1215	7467600585979667	Inventory_autogen/timestamp	ebab28bc5ff033a
+106	1215	7467600585979667	Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+1232	20180	7467600749608538	CMakeFiles/Inventory.dir/mainwindow.cpp.obj	cdf447d615e55d99
+1223	17562	7467600749573027	CMakeFiles/Inventory.dir/Inventory_autogen/mocs_compilation.cpp.obj	f3ac52f19f92bf01
+1236	20167	7467600749598321	CMakeFiles/Inventory.dir/DatabaseController.cpp.obj	ac45d0d7df3d5d8
+1216	20168	7467600749588156	CMakeFiles/Inventory.dir/main.cpp.obj	cdec13f447a4e6a0
+1228	20168	7467600749598321	CMakeFiles/Inventory.dir/loginwindow.cpp.obj	5dce37b236bd4a60
+20180	37820	7467600881696655	Inventory.exe	9e0e27c72d851082
+106	1215	7467600585979667	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/timestamp	ebab28bc5ff033a
+106	1215	7467600585979667	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+14	1596	7467638285702352	Inventory_autogen/timestamp	ebab28bc5ff033a
+14	1596	7467638285702352	Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+14	1596	7467638285702352	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/timestamp	ebab28bc5ff033a
+14	1596	7467638285702352	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+1607	6478	7467638335211383	CMakeFiles/Inventory.dir/DatabaseController.cpp.obj	ac45d0d7df3d5d8
+1601	8126	7467638351777884	CMakeFiles/Inventory.dir/Inventory_autogen/mocs_compilation.cpp.obj	f3ac52f19f92bf01
+1596	8381	7467638354326856	CMakeFiles/Inventory.dir/main.cpp.obj	cdec13f447a4e6a0
+1611	8733	7467638357829282	CMakeFiles/Inventory.dir/mainwindow.cpp.obj	cdf447d615e55d99
+1616	8746	7467638357968488	CMakeFiles/Inventory.dir/loginwindow.cpp.obj	5dce37b236bd4a60
+8746	9945	7467638362416976	Inventory.exe	4fd0fe91fa32d4c4
+17	687	7471752301013782	Inventory_autogen/timestamp	ebab28bc5ff033a
+17	687	7471752301013782	Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+17	687	7471752301013782	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/timestamp	ebab28bc5ff033a
+17	687	7471752301013782	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+13	1011	7471752562780225	Inventory_autogen/timestamp	ebab28bc5ff033a
+13	1011	7471752562780225	Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+13	1011	7471752562780225	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/timestamp	ebab28bc5ff033a
+13	1011	7471752562780225	C:/Users/alexandre/Documents/OneDrive - Université de Moncton/Personal/Coding Projects/Lumina/Inventory/cmake-build-debug/Inventory_autogen/mocs_compilation.cpp	ebab28bc5ff033a
+1027	3398	7471752587250229	CMakeFiles/Inventory.dir/DatabaseController.cpp.obj	ac45d0d7df3d5d8
+1015	4409	7471752597350253	CMakeFiles/Inventory.dir/Inventory_autogen/mocs_compilation.cpp.obj	f3ac52f19f92bf01
+1011	4550	7471752598770269	CMakeFiles/Inventory.dir/main.cpp.obj	cdec13f447a4e6a0
+1019	4766	7471752600940553	CMakeFiles/Inventory.dir/loginwindow.cpp.obj	5dce37b236bd4a60
+1023	4854	7471752601760209	CMakeFiles/Inventory.dir/mainwindow.cpp.obj	cdf447d615e55d99
+4854	5614	7471752605721907	Inventory.exe	4fd0fe91fa32d4c4
