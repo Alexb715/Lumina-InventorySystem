@@ -1,0 +1,11 @@
+# ninja log v5
+140	2548	1724958295908750075	CMakeFiles/InventorySystem.dir/loginwindow.cpp.o	a51404004b291e20
+140	2205	1724958295561168477	CMakeFiles/InventorySystem.dir/DatabaseController.cpp.o	c65432f0ecd6a053
+2635	2717	1724958296084297104	InventorySystem	dd0ba5f7bc7c3793
+140	2635	1724958295996064478	CMakeFiles/InventorySystem.dir/mainwindow.cpp.o	5b9bafbc334f090c
+139	2362	1724958295720892443	CMakeFiles/InventorySystem.dir/main.cpp.o	2a0424548dfd4bb5
+11	134	1724958293503643068	/Users/alexandrebeaulieu/Desktop/Lumina/InventorySystem/cmake-build-debug/InventorySystem_autogen/mocs_compilation.cpp	b632bca099bf04dd
+139	2315	1724958295673796694	CMakeFiles/InventorySystem.dir/InventorySystem_autogen/mocs_compilation.cpp.o	4feadc5106752a30
+11	134	1724958293503643068	/Users/alexandrebeaulieu/Desktop/Lumina/InventorySystem/cmake-build-debug/InventorySystem_autogen/timestamp	b632bca099bf04dd
+11	134	1724958293503643068	InventorySystem_autogen/mocs_compilation.cpp	b632bca099bf04dd
+11	134	1724958293503643068	InventorySystem_autogen/timestamp	b632bca099bf04dd
