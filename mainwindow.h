@@ -20,6 +20,16 @@ public:
     ~mainWindow() override;
 
 private:
+    bool zone0=false;
+    bool zone1=false;
+    bool zone2=false;
+    bool zone3=false;
+    bool zone4=false;
+    bool zone5=false;
+    bool zone6=false;
+    bool zone7=false;
+    bool zone8=false;
+    bool zone9=false;
     int zone[10] = {0};
     Ui::mainWindow *ui;
     loginwindow* login;

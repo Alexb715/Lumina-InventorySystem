@@ -50,10 +50,12 @@ void mainWindow::on_zone1_toggled(bool checked) {
     if(checked){
         std::cout << "zone 1 checked";
         zone[1]=1;
+        zone1=true;
     }
     else{
         std::cout << "zone 1 unchecked";
         zone[1]=0;
+        zone1=false;
     }
 }
 
@@ -61,10 +63,12 @@ void mainWindow::on_zone2_toggled(bool checked) {
     if(checked){
         std::cout << "zone 2 checked";
         zone[2]=1;
+        zone2=true;
     }
     else{
         std::cout << "zone 2 unchecked";
         zone[2]=0;
+        zone2=false;
     }
 }
 
@@ -72,10 +76,12 @@ void mainWindow::on_zone3_toggled(bool checked) {
     if(checked){
         std::cout << "zone 3 checked";
         zone[3]=1;
+        zone3=true;
     }
     else{
         std::cout << "zone 3 unchecked";
         zone[3]=0;
+        zone3=false;
     }
 }
 
@@ -83,20 +89,24 @@ void mainWindow::on_zone4_toggled(bool checked) {
     if(checked){
         std::cout << "zone 4 checked";
         zone[4]=1;
+        zone4=true;
     }
     else{
         std::cout << "zone 4 unchecked";
         zone[4]=0;
+        zone4= false;
     }
 }
 
 void mainWindow::on_zone5_toggled(bool checked) {
         if(checked){std::cout << "zone 5 checked";
         zone[5]=1;
+        zone5=true;
     }
     else{
         std::cout << "zone 5 unchecked";
         zone[5]=0;
+        zone5=false;
     }
 
 }
@@ -105,10 +115,12 @@ void mainWindow::on_zone6_toggled(bool checked) {
     if(checked){
         std::cout << "zone 6 checked";
         zone[6]=1;
+        zone6=true;
     }
     else{
         std::cout << "zone 6 unchecked";
         zone[6]=0;
+        zone6=false;
     }
 }
 
@@ -116,10 +128,12 @@ void mainWindow::on_zone7_toggled(bool checked) {
     if(checked){
         std::cout << "zone 7 checked";
         zone[7]=1;
+        zone7=true;
     }
     else{
         std::cout << "zone 7 unchecked";
         zone[7]=0;
+        zone7=false;
     }
 }
 
@@ -127,10 +141,12 @@ void mainWindow::on_zone8_toggled(bool checked) {
     if(checked){
         std::cout << "zone 8 checked";
         zone[8]=1;
+        zone8=true;
     }
     else{
         std::cout << "zone 8 unchecked";
         zone[8]=0;
+        zone8=false;
     }
 }
 
@@ -138,10 +154,12 @@ void mainWindow::on_zone9_toggled(bool checked) {
     if(checked){
         std::cout << "zone 9 checked";
         zone[9]=1;
+        zone9=true;
     }
     else{
         std::cout << "zone 9 unchecked";
         zone[9]=0;
+        zone9=false;
     }
 }
 //checks or unchecks all zones
@@ -152,19 +170,34 @@ void mainWindow::on_zone10_toggled(bool checked) {
         }
     }
     else{
+        //unchecks everything
         for(int i =0; i <10;i++){
             zone[i]=0;
         }
+        this->on_zone1_toggled(zone1);
+        this->on_zone2_toggled(zone2);
+        this->on_zone3_toggled(zone3);
+        this->on_zone4_toggled(zone4);
+        this->on_zone5_toggled(zone5);
+        this->on_zone6_toggled(zone6);
+        this->on_zone7_toggled(zone7);
+        this->on_zone8_toggled(zone8);
+        this->on_zone9_toggled(zone9);
+        this->on_zone0_toggled(zone0);
+
+
     }
 }
 void mainWindow::on_zone0_toggled(bool checked){
     if(checked){
         std::cout << "zone 0 checked";
         zone[0]=1;
+        zone0=true;
     }
     else{
         std::cout << "zone 0 unchecked";
         zone[0]=0;
+        zone0=false;
     }
 }
 //when checkin button is clicked
