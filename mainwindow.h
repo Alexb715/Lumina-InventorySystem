@@ -30,7 +30,7 @@ private:
     bool zone7=false;
     bool zone8=false;
     bool zone9=false;
-    int zone[10] = {0};
+    int zone[11] = {0};
     Ui::mainWindow *ui;
     loginwindow* login;
     DBController* database= new DBController;
@@ -41,6 +41,7 @@ private slots:
     void on_zone2_toggled(bool checked);
     void on_zone3_toggled(bool checked);
     void on_zone4_toggled(bool checked);
+    void on_zone45_toggled(bool checked);
     void on_zone5_toggled(bool checked);
     void on_zone6_toggled(bool checked);
     void on_zone7_toggled(bool checked);

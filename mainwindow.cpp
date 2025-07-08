@@ -5,7 +5,7 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_mainWindow.h" resolved
 
 #include "mainwindow.h"
-#include "ui_mainWindow.h"
+#include "ui_mainwindow.h"
 #include "DatabaseController.h"
 #include "iostream"
 #include <vector>
@@ -95,6 +95,19 @@ void mainWindow::on_zone4_toggled(bool checked) {
         std::cout << "zone 4 unchecked";
         zone[4]=0;
         zone4= false;
+    }
+}
+
+void mainWindow::on_zone45_toggled(bool checked)
+{
+    if(checked){std::cout << "zone 45 checked";
+        zone[10]=1;
+        zone5=true;
+    }
+    else{
+        std::cout << "zone 45 unchecked";
+        zone[10]=0;
+        zone5=false;
     }
 }
 
@@ -208,11 +221,15 @@ void mainWindow::on_checkinButton_clicked() {
         return;
     }
     //goes thru all zones to properly send the query for only the ones wanted
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < 11; i++) {
         std::vector<std::string> Bindvalue{1};
         Bindvalue[0] = std::to_string(i);
         if(zone[i] == 1){
+            if (i == 10){Bindvalue[0] = "4.5";} //specifique for new zone
             database->prepareStatement("UPDATE assets set assigned_to = null, location_id = 0 where _snipeit_zone_4 = ?");
+            database->prepareBind(Bindvalue);
+            database->executeStatement();
+            database->prepareStatement("UPDATE assets set status_id = 2 where _snipeit_zone_4 = ?");
             database->prepareBind(Bindvalue);
             database->executeStatement();
         }
@@ -231,20 +248,35 @@ void mainWindow::on_checkoutButton_clicked() {
         return;
     }
     bool first = true;
-   for(int i = 0; i< 10; i++){
+   for(int i = 0; i< 11; i++){
        if (zone[i] == 1){
-
+           std::vector <std::string> Bindvalue {1};
            std::vector <std::string> toBeBinded {3};
            toBeBinded[0] = std::to_string(i+4);
            toBeBinded[1]=toBeBinded[0];
            toBeBinded[2] = std::to_string(i);
+           bindValues[0] = toBeBinded[2];
+           if (i == 10)
+           {
+               toBeBinded[0] = "23";
+               toBeBinded[1]=toBeBinded[0];
+               toBeBinded[2] = "4.5";
+               bindValues[0] = toBeBinded[2];
+           }
+
            database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
            database->prepareBind(toBeBinded);
+           database->executeStatement();
+           database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?");
+           database->prepareBind(Bindvalue);
            database->executeStatement();
            //because of weird bug that im not sure where it comes from try it without and you will see
            if (first){
                database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
                database->prepareBind(toBeBinded);
+               database->executeStatement();
+               database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?");
+               database->prepareBind(Bindvalue);
                database->executeStatement();
            }
            first =false;

@@ -3,7 +3,7 @@
 //
 
 #include "DatabaseController.h"
-#include "mysql.h"
+#include "mysql/mysql.h"
 #include "iostream"
 #include <vector>
 #include "sstream"

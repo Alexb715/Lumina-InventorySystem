@@ -1,10 +1,11 @@
 //
 // Created by Alexandre Beaulieu on 2024-08-27.
 //
-#include "mysql.h"
+#include "mysql/mysql.h"
 #include <iostream>
 #include <vector>
 #include "sstream"
+#include <cstring>
 #ifndef DATABASECONTROL_DATABASECONTROLLER_H
 #define DATABASECONTROL_DATABASECONTROLLER_H
 class DBController{
