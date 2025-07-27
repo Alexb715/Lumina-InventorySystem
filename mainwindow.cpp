@@ -226,10 +226,10 @@ void mainWindow::on_checkinButton_clicked() {
         Bindvalue[0] = std::to_string(i);
         if(zone[i] == 1){
             if (i == 10){Bindvalue[0] = "4.5";} //specifique for new zone
-            database->prepareStatement("UPDATE assets set assigned_to = null, location_id = 0 where _snipeit_zone_4 = ?");
+            database->prepareStatement("UPDATE assets set assigned_to = null, location_id = 0 where _snipeit_zone_4 = ?;");
             database->prepareBind(Bindvalue);
             database->executeStatement();
-            database->prepareStatement("UPDATE assets set status_id = 2 where _snipeit_zone_4 = ?");
+            database->prepareStatement("UPDATE assets set status_id = 2 where _snipeit_zone_4 = ?;");
             database->prepareBind(Bindvalue);
             database->executeStatement();
         }
@@ -267,7 +267,7 @@ void mainWindow::on_checkoutButton_clicked() {
            database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
            database->prepareBind(toBeBinded);
            database->executeStatement();
-           database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?");
+           database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?;");
            database->prepareBind(Bindvalue);
            database->executeStatement();
            //because of weird bug that im not sure where it comes from try it without and you will see
@@ -275,7 +275,7 @@ void mainWindow::on_checkoutButton_clicked() {
                database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
                database->prepareBind(toBeBinded);
                database->executeStatement();
-               database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?");
+               database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?;");
                database->prepareBind(Bindvalue);
                database->executeStatement();
            }
