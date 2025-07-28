@@ -17,24 +17,20 @@ if(UNIX)
 endif()
 
 # --- Find Dependencies ---
-# Qt5 - Finds Qt libraries for all platforms.
-# For Windows/macOS, you may need to tell CMake where to find Qt by setting
-# CMAKE_PREFIX_PATH, e.g., -DCMAKE_PREFIX_PATH="C:/Qt/5.15.2/mingw81_64"
+# Qt5 - Provide path via -DCMAKE_PREFIX_PATH if needed
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
-# MySQL/MariaDB - Find the database client library for each OS
+# --- Platform-Specific Database Linking ---
 if(UNIX AND NOT APPLE)
-    # For Linux, use pkg-config to find MariaDB client
+    # Linux/MariaDB (e.g. on Debian-based systems)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(MYSQL REQUIRED IMPORTED_TARGET libmariadb)
 
-elseif(WIN32 OR APPLE)
-    # For Windows and macOS, use CMake's FindMySQL module.
-    # On Windows, you may need to set -DMySQL_DIR="C:/Program Files/MySQL/MySQL Server 8.0"
-    # On macOS, Homebrew should configure this to work automatically.
-    find_package(MySQL REQUIRED)
+elseif(WIN32)
+    # Manual MySQL path setup for Windows
+    set(MySQL_INCLUDE_DIR "C:/Program Files/MySQL/MySQL Server 8.0/include")
+    set(MySQL_LIBRARY "C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib")
 endif()
-
 
 # --- Executable Definition ---
 add_executable(InventorySystem
@@ -50,42 +46,35 @@ add_executable(InventorySystem
 )
 
 # --- Linking Libraries ---
-# Link Qt libraries (common to all)
 target_link_libraries(InventorySystem PRIVATE
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
 )
 
-# Link platform-specific database library
 if(UNIX AND NOT APPLE)
     target_link_libraries(InventorySystem PRIVATE PkgConfig::MYSQL)
-elseif(WIN32 OR APPLE)
+elseif(WIN32)
     target_include_directories(InventorySystem PRIVATE ${MySQL_INCLUDE_DIR})
-    target_link_libraries(InventorySystem PRIVATE MySQL::Client)
+    target_link_libraries(InventorySystem PRIVATE ${MySQL_LIBRARY})
 endif()
 
 # --- Platform-Specific Post-Build Steps ---
-
 if(APPLE)
-    # Set minimum required macOS version
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING "Minimum macOS deployment version" FORCE)
 endif()
 
 if(WIN32)
-    # Use WIN32_EXECUTABLE to hide the console window on launch
     set_target_properties(InventorySystem PROPERTIES WIN32_EXECUTABLE YES)
 
-    # Custom command to copy required Qt and MySQL DLLs to the build directory
-    # so the application can be run directly from the build folder.
+    # Copy MySQL DLL
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different
-            "${MySQL_LIBRARY}"
+            "C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.dll"
             $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
 
-    # This script locates the Qt installation and copies the necessary platform plugin
-    # and core DLLs next to your compiled executable.
+    # Copy Qt DLLs and plugin
     set(DEBUG_SUFFIX "")
     if(MSVC AND CMAKE_BUILD_TYPE MATCHES "Debug")
         set(DEBUG_SUFFIX "d")
