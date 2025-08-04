@@ -242,7 +242,6 @@ void mainWindow::on_checkinButton_clicked() {
 
 //same principle as checkin
 void mainWindow::on_checkoutButton_clicked() {
-    std::vector<std::string> bindValues(2);
     if(!database->connected()){
         ui->statusbar->showMessage("Error Not Connected to Database");
         return;
@@ -250,18 +249,18 @@ void mainWindow::on_checkoutButton_clicked() {
     bool first = true;
    for(int i = 0; i< 11; i++){
        if (zone[i] == 1){
-           std::vector <std::string> Bindvalue {1};
-           std::vector <std::string> toBeBinded {3};
+           std::vector<std::string> Bindvalue(1);  // Creates a vector with 1 empty string
+           std::vector<std::string> toBeBinded(3); // Creates a vector with 3 empty strings
            toBeBinded[0] = std::to_string(i+4);
            toBeBinded[1]=toBeBinded[0];
            toBeBinded[2] = std::to_string(i);
-           bindValues[0] = toBeBinded[2];
+           Bindvalue[0] = toBeBinded[2];
            if (i == 10)
            {
                toBeBinded[0] = "23";
                toBeBinded[1]=toBeBinded[0];
                toBeBinded[2] = "4.5";
-               bindValues[0] = toBeBinded[2];
+               Bindvalue[0] = toBeBinded[2];
            }
 
            database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
