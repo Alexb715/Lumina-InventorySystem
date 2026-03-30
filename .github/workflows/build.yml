@@ -23,7 +23,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake g++ qtbase5-dev \
             libmariadb-dev libmariadb-dev-compat \
-            libfuse2 file libqt5network5
+            libfuse2 file libqt5network5 \
+            qtwayland5 libqt5waylandclient5-dev
 
       - name: Extract version
         id: version
@@ -109,6 +110,7 @@ jobs:
           "include=$($mysqlDir.FullName)\include" >> $env:GITHUB_OUTPUT
           "lib=$($mysqlDir.FullName)\lib\libmysql.lib" >> $env:GITHUB_OUTPUT
           "dll=$($mysqlDir.FullName)\lib\libmysql.dll" >> $env:GITHUB_OUTPUT
+          "bin=$($mysqlDir.FullName)\bin" >> $env:GITHUB_OUTPUT
 
       - name: Build
         shell: cmd
@@ -121,11 +123,22 @@ jobs:
           cmake --build build
 
       - name: Package
-        shell: cmd
+        shell: pwsh
         run: |
           mkdir package
           copy build\InventorySystem.exe package\
           copy "${{ steps.mysql.outputs.dll }}" package\
+          # Bundle OpenSSL DLLs required by libmysql.dll
+          $mysqlBin = "${{ steps.mysql.outputs.bin }}"
+          foreach ($dll in @("libssl-3-x64.dll", "libcrypto-3-x64.dll")) {
+            $src = Join-Path $mysqlBin $dll
+            if (Test-Path $src) {
+              Write-Host "Copying $dll from MySQL bin"
+              Copy-Item $src package\
+            } else {
+              Write-Host "WARNING: $dll not found in $mysqlBin"
+            }
+          }
           windeployqt package\InventorySystem.exe
           copy icons\lumina_256.png package\lumina.png
 
