@@ -4,7 +4,7 @@
 #ifndef DATABASECONTROL_DATABASECONTROLLER_H
 #define DATABASECONTROL_DATABASECONTROLLER_H
 
-#include "mysql/mysql.h"
+#include <mysql.h>
 #include <vector>
 #include <string>
 

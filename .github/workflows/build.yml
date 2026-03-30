@@ -110,6 +110,7 @@ jobs:
         shell: pwsh
         run: |
           $mysqlDir = Get-ChildItem "C:\Program Files\MySQL\MySQL Server *" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          Write-Host "Found MySQL at: $($mysqlDir.FullName)"
           "include=$($mysqlDir.FullName)\include" >> $env:GITHUB_OUTPUT
           "lib=$($mysqlDir.FullName)\lib\libmysql.lib" >> $env:GITHUB_OUTPUT
           "dll=$($mysqlDir.FullName)\lib\libmysql.dll" >> $env:GITHUB_OUTPUT

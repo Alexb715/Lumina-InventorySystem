@@ -32,9 +32,11 @@ if(UNIX AND NOT APPLE)
     pkg_check_modules(MYSQL REQUIRED IMPORTED_TARGET libmariadb)
 
 elseif(APPLE)
-    # macOS: find MySQL client via env vars or brew
+    # macOS: find MySQL client via -DMySQL_INCLUDE_DIR or brew
     if(NOT DEFINED MySQL_INCLUDE_DIR)
-        execute_process(COMMAND brew --prefix mysql-client OUTPUT_VARIABLE MYSQL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        execute_process(COMMAND brew --prefix mysql-client
+            OUTPUT_VARIABLE MYSQL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        # brew puts mysql.h at <prefix>/include/mysql/mysql.h
         set(MySQL_INCLUDE_DIR "${MYSQL_PREFIX}/include/mysql" CACHE PATH "MySQL include dir")
         set(MySQL_LIBRARY "${MYSQL_PREFIX}/lib/libmysqlclient.dylib" CACHE FILEPATH "MySQL library")
     endif()
