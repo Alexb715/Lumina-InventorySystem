@@ -10,6 +10,7 @@
 #include <memory>
 #include "DatabaseController.h"
 #include "loginwindow.h"
+#include "updatechecker.h"
 #include "constants.h"
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +29,8 @@ private:
     Ui::mainWindow *ui;
     loginwindow *login = nullptr;
     std::unique_ptr<DBController> database;
+    UpdateChecker m_updateChecker;
+    QString m_updateUrl;
 
     void connectZoneCheckboxes();
 

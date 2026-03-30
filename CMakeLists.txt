@@ -18,7 +18,12 @@ endif()
 
 # --- Find Dependencies ---
 # Qt5 - Provide path via -DCMAKE_PREFIX_PATH if needed
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets Network REQUIRED)
+
+# --- Version (pass -DAPP_VERSION=x.y.z from CI, defaults to 0.0.0) ---
+if(NOT DEFINED APP_VERSION)
+    set(APP_VERSION "0.0.0")
+endif()
 
 # --- Platform-Specific Database Linking ---
 if(UNIX AND NOT APPLE)
@@ -43,15 +48,20 @@ add_executable(InventorySystem
         loginwindow.cpp
         loginwindow.h
         loginwindow.ui
+        updatechecker.cpp
+        updatechecker.h
         resources.qrc
         constants.h
 )
+
+target_compile_definitions(InventorySystem PRIVATE APP_VERSION="${APP_VERSION}")
 
 # --- Linking Libraries ---
 target_link_libraries(InventorySystem PRIVATE
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
+        Qt5::Network
 )
 
 if(UNIX AND NOT APPLE)

@@ -6,19 +6,36 @@
 #include "ui_mainwindow.h"
 #include <QCheckBox>
 #include <QDebug>
+#include <QDesktopServices>
+#include <QUrl>
 
 using namespace InventoryConstants;
 
 mainWindow::mainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::mainWindow),
-        database(std::make_unique<DBController>()) {
+        database(std::make_unique<DBController>()),
+        m_updateChecker(this) {
     ui->setupUi(this);
     setWindowTitle("Lumina Inventory System");
     ui->statusbar->showMessage("Disconnected");
     ui->checkinButton->setEnabled(false);
     ui->checkoutButton->setEnabled(false);
     connectZoneCheckboxes();
+
+    connect(&m_updateChecker, &UpdateChecker::updateAvailable, this,
+            [this](const QString &version, const QString &url) {
+        m_updateUrl = url;
+        ui->statusbar->showMessage("Update available: v" + version, 0);
+
+        auto *updateAction = new QAction("Download Update v" + version, this);
+        connect(updateAction, &QAction::triggered, this, [this]() {
+            QDesktopServices::openUrl(QUrl(m_updateUrl));
+        });
+        ui->menubar->addAction(updateAction);
+    });
+
+    m_updateChecker.checkForUpdates();
 }
 
 mainWindow::~mainWindow() {

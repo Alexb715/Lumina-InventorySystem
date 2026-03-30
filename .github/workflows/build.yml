@@ -9,6 +9,9 @@ on:
 permissions:
   contents: write
 
+env:
+  APP_NAME: LuminaInventorySystem
+
 jobs:
   build-linux:
     runs-on: ubuntu-22.04
@@ -19,12 +22,22 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y cmake g++ qtbase5-dev libmariadb-dev \
-            libfuse2 file
+            libfuse2 file libqt5network5
+
+      - name: Extract version
+        id: version
+        run: |
+          if [[ "$GITHUB_REF" =~ ^refs/tags/v(.+)$ ]]; then
+            echo "ver=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ver=0.0.0" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build
         run: |
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=/usr
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DAPP_VERSION=${{ steps.version.outputs.ver }}
           cmake --build build --parallel
 
       - name: Create AppDir
@@ -35,25 +48,24 @@ jobs:
           cp build/InventorySystem AppDir/usr/bin/
           cp icons/lumina_256.png AppDir/usr/share/icons/hicolor/256x256/apps/lumina.png
           cp icons/lumina_256.png AppDir/lumina.png
-
-          cat > AppDir/usr/share/applications/lumina.desktop << 'EOF'
+          cat > AppDir/lumina.desktop << 'DESKTOP'
           [Desktop Entry]
           Name=Lumina Inventory System
           Exec=InventorySystem
           Icon=lumina
           Type=Application
           Categories=Utility;
-          EOF
-          cp AppDir/usr/share/applications/lumina.desktop AppDir/lumina.desktop
+          DESKTOP
+          cp AppDir/lumina.desktop AppDir/usr/share/applications/lumina.desktop
 
-      - name: Download and run linuxdeploy
+      - name: Create AppImage
         run: |
           wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
           wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
           chmod +x linuxdeploy*.AppImage
           export QMAKE=$(which qmake)
           ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
-          mv Lumina_Inventory_System*.AppImage LuminaInventorySystem-linux-x86_64.AppImage 2>/dev/null || mv *.AppImage LuminaInventorySystem-linux-x86_64.AppImage
+          mv *.AppImage LuminaInventorySystem-linux-x86_64.AppImage 2>/dev/null || true
 
       - uses: actions/upload-artifact@v4
         with:
@@ -72,20 +84,32 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2019_64'
+          modules: 'qtnetworkauth'
 
       - name: Install MySQL
+        shell: pwsh
         run: |
-          choco install mysql --version=8.0.33 -y --params "/InstallDir:C:\mysql"
-        shell: cmd
+          choco install mysql --version=8.0.33 -y
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Extract version
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') {
+            "ver=$($Matches[1])" >> $env:GITHUB_OUTPUT
+          } else {
+            "ver=0.0.0" >> $env:GITHUB_OUTPUT
+          }
 
       - name: Build
         shell: cmd
         run: |
           cmake -B build -G "NMake Makefiles" ^
             -DCMAKE_BUILD_TYPE=Release ^
+            -DAPP_VERSION=${{ steps.version.outputs.ver }} ^
             -DMySQL_INCLUDE_DIR="C:/Program Files/MySQL/MySQL Server 8.0/include" ^
             -DMySQL_LIBRARY="C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib"
           cmake --build build
@@ -112,33 +136,52 @@ jobs:
           path: LuminaInventorySystem-Setup.exe
 
   build-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install Qt 5 via aqt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          host: 'mac'
+          target: 'desktop'
+          arch: 'clang_64'
+
+      - name: Install MySQL client
         run: |
-          brew install qt@5 mysql-client pkg-config
-          echo "$(brew --prefix qt@5)/bin" >> "$GITHUB_PATH"
+          brew install mysql-client pkg-config
+
+      - name: Extract version
+        id: version
+        run: |
+          if [[ "$GITHUB_REF" =~ ^refs/tags/v(.+)$ ]]; then
+            echo "ver=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "ver=0.0.0" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Build
-        env:
-          CMAKE_PREFIX_PATH: /usr/local/opt/qt@5
         run: |
           export MySQL_INCLUDE_DIR="$(brew --prefix mysql-client)/include/mysql"
           export MySQL_LIBRARY="$(brew --prefix mysql-client)/lib/libmysqlclient.dylib"
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH"
+            -DAPP_VERSION=${{ steps.version.outputs.ver }}
           cmake --build build --parallel
 
-      - name: Create app bundle
+      - name: Create app bundle and DMG
         run: |
           mkdir -p LuminaInventorySystem.app/Contents/MacOS
           mkdir -p LuminaInventorySystem.app/Contents/Resources
           cp build/InventorySystem LuminaInventorySystem.app/Contents/MacOS/
           cp icons/lumina_256.png LuminaInventorySystem.app/Contents/Resources/lumina.png
 
-          cat > LuminaInventorySystem.app/Contents/Info.plist << 'EOF'
+          VERSION="1.0.0"
+          if [[ "$GITHUB_REF" =~ ^refs/tags/v(.+)$ ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+          fi
+
+          cat > LuminaInventorySystem.app/Contents/Info.plist << PLIST
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -150,19 +193,18 @@ jobs:
             <key>CFBundleIdentifier</key>
             <string>com.lumina.inventorysystem</string>
             <key>CFBundleVersion</key>
-            <string>1.0.0</string>
+            <string>${VERSION}</string>
+            <key>CFBundleShortVersionString</key>
+            <string>${VERSION}</string>
             <key>CFBundleIconFile</key>
             <string>lumina</string>
             <key>NSHighResolutionCapable</key>
             <true/>
           </dict>
           </plist>
-          EOF
+          PLIST
 
-          $(brew --prefix qt@5)/bin/macdeployqt LuminaInventorySystem.app
-
-      - name: Create DMG
-        run: |
+          macdeployqt LuminaInventorySystem.app
           hdiutil create -volname "Lumina Inventory System" \
             -srcfolder LuminaInventorySystem.app \
             -ov -format UDZO \
