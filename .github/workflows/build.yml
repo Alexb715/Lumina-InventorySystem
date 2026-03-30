@@ -21,7 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake g++ qtbase5-dev libmariadb-dev \
+          sudo apt-get install -y cmake g++ qtbase5-dev \
+            libmariadb-dev libmariadb-dev-compat \
             libfuse2 file libqt5network5
 
       - name: Extract version
@@ -89,7 +90,7 @@ jobs:
       - name: Install MySQL
         shell: pwsh
         run: |
-          choco install mysql --version=8.0.33 -y
+          choco install mysql -y
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
@@ -104,14 +105,23 @@ jobs:
             "ver=0.0.0" >> $env:GITHUB_OUTPUT
           }
 
+      - name: Find MySQL paths
+        id: mysql
+        shell: pwsh
+        run: |
+          $mysqlDir = Get-ChildItem "C:\Program Files\MySQL\MySQL Server *" -Directory | Sort-Object Name -Descending | Select-Object -First 1
+          "include=$($mysqlDir.FullName)\include" >> $env:GITHUB_OUTPUT
+          "lib=$($mysqlDir.FullName)\lib\libmysql.lib" >> $env:GITHUB_OUTPUT
+          "dll=$($mysqlDir.FullName)\lib\libmysql.dll" >> $env:GITHUB_OUTPUT
+
       - name: Build
         shell: cmd
         run: |
           cmake -B build -G "NMake Makefiles" ^
             -DCMAKE_BUILD_TYPE=Release ^
             -DAPP_VERSION=${{ steps.version.outputs.ver }} ^
-            -DMySQL_INCLUDE_DIR="C:/Program Files/MySQL/MySQL Server 8.0/include" ^
-            -DMySQL_LIBRARY="C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib"
+            -DMySQL_INCLUDE_DIR="${{ steps.mysql.outputs.include }}" ^
+            -DMySQL_LIBRARY="${{ steps.mysql.outputs.lib }}"
           cmake --build build
 
       - name: Package
@@ -119,7 +129,7 @@ jobs:
         run: |
           mkdir package
           copy build\InventorySystem.exe package\
-          copy "C:\Program Files\MySQL\MySQL Server 8.0\lib\libmysql.dll" package\
+          copy "${{ steps.mysql.outputs.dll }}" package\
           windeployqt package\InventorySystem.exe
           copy icons\lumina_256.png package\lumina.png
 
@@ -163,10 +173,11 @@ jobs:
 
       - name: Build
         run: |
-          export MySQL_INCLUDE_DIR="$(brew --prefix mysql-client)/include/mysql"
-          export MySQL_LIBRARY="$(brew --prefix mysql-client)/lib/libmysqlclient.dylib"
+          MYSQL_PREFIX="$(brew --prefix mysql-client)"
           cmake -B build -DCMAKE_BUILD_TYPE=Release \
-            -DAPP_VERSION=${{ steps.version.outputs.ver }}
+            -DAPP_VERSION=${{ steps.version.outputs.ver }} \
+            -DMySQL_INCLUDE_DIR="${MYSQL_PREFIX}/include/mysql" \
+            -DMySQL_LIBRARY="${MYSQL_PREFIX}/lib/libmysqlclient.dylib"
           cmake --build build --parallel
 
       - name: Create app bundle and DMG

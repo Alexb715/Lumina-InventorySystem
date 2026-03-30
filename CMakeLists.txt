@@ -27,14 +27,24 @@ endif()
 
 # --- Platform-Specific Database Linking ---
 if(UNIX AND NOT APPLE)
-    # Linux/MariaDB (e.g. on Debian-based systems)
+    # Linux: find MariaDB via pkg-config
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(MYSQL REQUIRED IMPORTED_TARGET libmariadb)
 
+elseif(APPLE)
+    # macOS: find MySQL client via env vars or brew
+    if(NOT DEFINED MySQL_INCLUDE_DIR)
+        execute_process(COMMAND brew --prefix mysql-client OUTPUT_VARIABLE MYSQL_PREFIX OUTPUT_STRIP_TRAILING_WHITESPACE)
+        set(MySQL_INCLUDE_DIR "${MYSQL_PREFIX}/include/mysql" CACHE PATH "MySQL include dir")
+        set(MySQL_LIBRARY "${MYSQL_PREFIX}/lib/libmysqlclient.dylib" CACHE FILEPATH "MySQL library")
+    endif()
+
 elseif(WIN32)
-    # Manual MySQL path setup for Windows
-    set(MySQL_INCLUDE_DIR "C:/Program Files/MySQL/MySQL Server 8.0/include")
-    set(MySQL_LIBRARY "C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib")
+    # Windows: find MySQL via env var or default path
+    if(NOT DEFINED MySQL_INCLUDE_DIR)
+        set(MySQL_INCLUDE_DIR "C:/Program Files/MySQL/MySQL Server 8.0/include")
+        set(MySQL_LIBRARY "C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib")
+    endif()
 endif()
 
 # --- Executable Definition ---
@@ -66,7 +76,9 @@ target_link_libraries(InventorySystem PRIVATE
 
 if(UNIX AND NOT APPLE)
     target_link_libraries(InventorySystem PRIVATE PkgConfig::MYSQL)
-elseif(WIN32)
+    # Also add include dirs explicitly (header may be at mariadb/mysql.h)
+    target_include_directories(InventorySystem PRIVATE ${MYSQL_INCLUDE_DIRS})
+elseif(APPLE OR WIN32)
     target_include_directories(InventorySystem PRIVATE ${MySQL_INCLUDE_DIR})
     target_link_libraries(InventorySystem PRIVATE ${MySQL_LIBRARY})
 endif()
