@@ -1,0 +1,192 @@
+name: Build Installers
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ qtbase5-dev libmariadb-dev \
+            libfuse2 file
+
+      - name: Build
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build --parallel
+
+      - name: Create AppDir
+        run: |
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p AppDir/usr/share/applications
+          cp build/InventorySystem AppDir/usr/bin/
+          cp icons/lumina_256.png AppDir/usr/share/icons/hicolor/256x256/apps/lumina.png
+          cp icons/lumina_256.png AppDir/lumina.png
+
+          cat > AppDir/usr/share/applications/lumina.desktop << 'EOF'
+          [Desktop Entry]
+          Name=Lumina Inventory System
+          Exec=InventorySystem
+          Icon=lumina
+          Type=Application
+          Categories=Utility;
+          EOF
+          cp AppDir/usr/share/applications/lumina.desktop AppDir/lumina.desktop
+
+      - name: Download and run linuxdeploy
+        run: |
+          wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
+          wget -q https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage
+          chmod +x linuxdeploy*.AppImage
+          export QMAKE=$(which qmake)
+          ./linuxdeploy-x86_64.AppImage --appdir AppDir --plugin qt --output appimage
+          mv Lumina_Inventory_System*.AppImage LuminaInventorySystem-linux-x86_64.AppImage 2>/dev/null || mv *.AppImage LuminaInventorySystem-linux-x86_64.AppImage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-appimage
+          path: LuminaInventorySystem-linux-x86_64.AppImage
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '5.15.2'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2019_64'
+
+      - name: Install MySQL
+        run: |
+          choco install mysql --version=8.0.33 -y --params "/InstallDir:C:\mysql"
+        shell: cmd
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build
+        shell: cmd
+        run: |
+          cmake -B build -G "NMake Makefiles" ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DMySQL_INCLUDE_DIR="C:/Program Files/MySQL/MySQL Server 8.0/include" ^
+            -DMySQL_LIBRARY="C:/Program Files/MySQL/MySQL Server 8.0/lib/libmysql.lib"
+          cmake --build build
+
+      - name: Package
+        shell: cmd
+        run: |
+          mkdir package
+          copy build\InventorySystem.exe package\
+          copy "C:\Program Files\MySQL\MySQL Server 8.0\lib\libmysql.dll" package\
+          windeployqt package\InventorySystem.exe
+          copy icons\lumina_256.png package\lumina.png
+
+      - name: Create installer with NSIS
+        shell: pwsh
+        run: |
+          choco install nsis -y
+          $version = if ($env:GITHUB_REF -match '^refs/tags/v(.+)$') { $Matches[1] } else { "0.0.0" }
+          & "C:\Program Files (x86)\NSIS\makensis.exe" /DVERSION=$version installer.nsi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: LuminaInventorySystem-Setup.exe
+
+  build-macos:
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install qt@5 mysql-client pkg-config
+          echo "$(brew --prefix qt@5)/bin" >> "$GITHUB_PATH"
+
+      - name: Build
+        env:
+          CMAKE_PREFIX_PATH: /usr/local/opt/qt@5
+        run: |
+          export MySQL_INCLUDE_DIR="$(brew --prefix mysql-client)/include/mysql"
+          export MySQL_LIBRARY="$(brew --prefix mysql-client)/lib/libmysqlclient.dylib"
+          cmake -B build -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$CMAKE_PREFIX_PATH"
+          cmake --build build --parallel
+
+      - name: Create app bundle
+        run: |
+          mkdir -p LuminaInventorySystem.app/Contents/MacOS
+          mkdir -p LuminaInventorySystem.app/Contents/Resources
+          cp build/InventorySystem LuminaInventorySystem.app/Contents/MacOS/
+          cp icons/lumina_256.png LuminaInventorySystem.app/Contents/Resources/lumina.png
+
+          cat > LuminaInventorySystem.app/Contents/Info.plist << 'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleExecutable</key>
+            <string>InventorySystem</string>
+            <key>CFBundleName</key>
+            <string>Lumina Inventory System</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.lumina.inventorysystem</string>
+            <key>CFBundleVersion</key>
+            <string>1.0.0</string>
+            <key>CFBundleIconFile</key>
+            <string>lumina</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+          $(brew --prefix qt@5)/bin/macdeployqt LuminaInventorySystem.app
+
+      - name: Create DMG
+        run: |
+          hdiutil create -volname "Lumina Inventory System" \
+            -srcfolder LuminaInventorySystem.app \
+            -ov -format UDZO \
+            LuminaInventorySystem-macos-x86_64.dmg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos-dmg
+          path: LuminaInventorySystem-macos-x86_64.dmg
+
+  release:
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            LuminaInventorySystem-linux-x86_64.AppImage
+            LuminaInventorySystem-Setup.exe
+            LuminaInventorySystem-macos-x86_64.dmg
+          generate_release_notes: true

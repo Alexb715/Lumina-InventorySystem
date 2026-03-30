@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e2e"/>
+      <stop offset="100%" style="stop-color:#2d2d44"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#89b4fa"/>
+      <stop offset="100%" style="stop-color:#74a8f7"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#a6e3a1"/>
+      <stop offset="100%" style="stop-color:#89b4fa"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="innerGlow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="32" y="32" width="448" height="448" rx="80" ry="80" fill="url(#bg)" filter="url(#shadow)"/>
+
+  <!-- Outer glow ring -->
+  <circle cx="256" cy="240" r="140" fill="none" stroke="url(#glow)" stroke-width="3" opacity="0.3"/>
+
+  <!-- Box / cube - warehouse crate -->
+  <!-- Back face -->
+  <path d="M 176 200 L 256 152 L 336 200 L 336 296 L 256 344 L 176 296 Z"
+        fill="none" stroke="#45475a" stroke-width="2.5"/>
+
+  <!-- Left face -->
+  <path d="M 176 200 L 256 248 L 256 344 L 176 296 Z"
+        fill="#2d2d44" stroke="url(#glow)" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Right face -->
+  <path d="M 336 200 L 256 248 L 256 344 L 336 296 Z"
+        fill="#363654" stroke="url(#glow)" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Top face -->
+  <path d="M 176 200 L 256 152 L 336 200 L 256 248 Z"
+        fill="#3f3f5c" stroke="url(#glow)" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- Luminous dot in center of top face -->
+  <circle cx="256" cy="200" r="12" fill="url(#accent)" opacity="0.9"/>
+  <circle cx="256" cy="200" r="6" fill="#cdd6f4"/>
+
+  <!-- Grid lines on left face -->
+  <line x1="196" y1="212" x2="236" y2="236" stroke="#89b4fa" stroke-width="1.2" opacity="0.4"/>
+  <line x1="196" y1="236" x2="236" y2="260" stroke="#89b4fa" stroke-width="1.2" opacity="0.4"/>
+  <line x1="196" y1="260" x2="236" y2="284" stroke="#89b4fa" stroke-width="1.2" opacity="0.4"/>
+
+  <!-- Grid lines on right face -->
+  <line x1="316" y1="212" x2="276" y2="236" stroke="#89b4fa" stroke-width="1.2" opacity="0.4"/>
+  <line x1="316" y1="236" x2="276" y2="260" stroke="#89b4fa" stroke-width="1.2" opacity="0.4"/>
+  <line x1="316" y1="260" x2="276" y2="284" stroke="#89b4fa" stroke-width="1.2" opacity="0.4"/>
+
+  <!-- Checkmark overlay -->
+  <path d="M 228 260 L 248 280 L 284 232"
+        fill="none" stroke="#a6e3a1" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+
+  <!-- Text: LUMINA -->
+  <text x="256" y="410" text-anchor="middle"
+        font-family="Segoe UI, SF Pro Display, Cantarell, sans-serif"
+        font-size="48" font-weight="700" letter-spacing="8"
+        fill="#cdd6f4">LUMINA</text>
+</svg>

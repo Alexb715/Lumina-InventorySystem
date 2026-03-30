@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
     <file>styles/dark_theme.qss</file>
+    <file>icons/lumina.svg</file>
+    <file>icons/lumina_256.png</file>
   </qresource>
 </RCC>
