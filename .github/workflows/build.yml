@@ -49,14 +49,7 @@ jobs:
           cp build/InventorySystem AppDir/usr/bin/
           cp icons/lumina_256.png AppDir/usr/share/icons/hicolor/256x256/apps/lumina.png
           cp icons/lumina_256.png AppDir/lumina.png
-          cat > AppDir/lumina.desktop << 'DESKTOP'
-[Desktop Entry]
-Name=Lumina_Inventory_System
-Exec=InventorySystem
-Icon=lumina
-Type=Application
-Categories=Utility;
-DESKTOP
+          printf '[Desktop Entry]\nName=Lumina_Inventory_System\nExec=InventorySystem\nIcon=lumina\nType=Application\nCategories=Utility;\n' > AppDir/lumina.desktop
           cp AppDir/lumina.desktop AppDir/usr/share/applications/lumina.desktop
 
       - name: Create AppImage
