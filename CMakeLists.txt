@@ -43,6 +43,8 @@ add_executable(InventorySystem
         loginwindow.cpp
         loginwindow.h
         loginwindow.ui
+        resources.qrc
+        constants.h
 )
 
 # --- Linking Libraries ---

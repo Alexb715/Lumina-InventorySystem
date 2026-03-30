@@ -2,289 +2,127 @@
 // Created by Alexandre Beaulieu on 2024-08-28.
 //
 
-// You may need to build the project (run Qt uic code generator) to get "ui_mainWindow.h" resolved
-
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "DatabaseController.h"
-#include "iostream"
-#include <vector>
+#include <QCheckBox>
+#include <QDebug>
+
+using namespace InventoryConstants;
+
 mainWindow::mainWindow(QWidget *parent) :
-        QMainWindow(parent), ui(new Ui::mainWindow) {
+        QMainWindow(parent),
+        ui(new Ui::mainWindow),
+        database(std::make_unique<DBController>()) {
     ui->setupUi(this);
+    setWindowTitle("Lumina Inventory System");
     ui->statusbar->showMessage("Disconnected");
+    ui->checkinButton->setEnabled(false);
+    ui->checkoutButton->setEnabled(false);
+    connectZoneCheckboxes();
 }
 
 mainWindow::~mainWindow() {
     delete ui;
-    //if DB is connected it deletes database to make sure it is disconnected and memory allocation is properly handled
-    if(database->connected()){
-    delete database;}
 }
- //opens login window and sends DB address to its pointer
+
+void mainWindow::connectZoneCheckboxes() {
+    for (const auto &zone : ZONES) {
+        auto *cb = findChild<QCheckBox *>(zone.widgetName);
+        if (!cb) continue;
+        int idx = zone.index;
+        connect(cb, &QCheckBox::toggled, this, [this, idx](bool checked) {
+            m_zoneSelected[idx] = checked;
+        });
+    }
+}
+
 void mainWindow::on_actionConnect_triggered() {
+    if (login) return;
+
     login = new loginwindow(nullptr);
-    //connects signals to properly send and receive
-    connect(this,&mainWindow::SendDb, login,&loginwindow::receiveDB);
-    connect(login,&loginwindow::loginClosed,this,&mainWindow::on_loginClosed);
-    emit SendDb(database);
+    connect(this, &mainWindow::SendDb, login, &loginwindow::receiveDB);
+    connect(login, &loginwindow::loginClosed, this, &mainWindow::on_loginClosed);
+    emit SendDb(database.get());
     login->show();
-
 }
-// when close signal is sent
+
 void mainWindow::on_loginClosed() {
-    //when close signal is sent disconnects proper channels
-    disconnect(this,&mainWindow::SendDb, login,&loginwindow::receiveDB);
-    disconnect(login,&loginwindow::loginClosed,this,&mainWindow::on_loginClosed);
-    std::cout << "login Closed";
-    //set for window do be deleted for memory allocation
+    disconnect(this, &mainWindow::SendDb, login, &loginwindow::receiveDB);
+    disconnect(login, &loginwindow::loginClosed, this, &mainWindow::on_loginClosed);
+    qDebug() << "Login window closed";
     login->deleteLater();
-    if(database->connected()){
-        //updates status bar
-    ui->statusbar->showMessage("Connected");
-    }
+    login = nullptr;
 
-}
-//all zones work the same checks to mkake sure it is either checked or un checked
-void mainWindow::on_zone1_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 1 checked";
-        zone[1]=1;
-        zone1=true;
-    }
-    else{
-        std::cout << "zone 1 unchecked";
-        zone[1]=0;
-        zone1=false;
+    if (database->connected()) {
+        ui->statusbar->showMessage("Connected");
+        ui->checkinButton->setEnabled(true);
+        ui->checkoutButton->setEnabled(true);
+        setWindowTitle("Lumina Inventory System - Connected");
     }
 }
 
-void mainWindow::on_zone2_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 2 checked";
-        zone[2]=1;
-        zone2=true;
-    }
-    else{
-        std::cout << "zone 2 unchecked";
-        zone[2]=0;
-        zone2=false;
-    }
-}
-
-void mainWindow::on_zone3_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 3 checked";
-        zone[3]=1;
-        zone3=true;
-    }
-    else{
-        std::cout << "zone 3 unchecked";
-        zone[3]=0;
-        zone3=false;
-    }
-}
-
-void mainWindow::on_zone4_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 4 checked";
-        zone[4]=1;
-        zone4=true;
-    }
-    else{
-        std::cout << "zone 4 unchecked";
-        zone[4]=0;
-        zone4= false;
-    }
-}
-
-void mainWindow::on_zone45_toggled(bool checked)
-{
-    if(checked){std::cout << "zone 45 checked";
-        zone[10]=1;
-        zone5=true;
-    }
-    else{
-        std::cout << "zone 45 unchecked";
-        zone[10]=0;
-        zone5=false;
-    }
-}
-
-void mainWindow::on_zone5_toggled(bool checked) {
-        if(checked){std::cout << "zone 5 checked";
-        zone[5]=1;
-        zone5=true;
-    }
-    else{
-        std::cout << "zone 5 unchecked";
-        zone[5]=0;
-        zone5=false;
-    }
-
-}
-
-void mainWindow::on_zone6_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 6 checked";
-        zone[6]=1;
-        zone6=true;
-    }
-    else{
-        std::cout << "zone 6 unchecked";
-        zone[6]=0;
-        zone6=false;
-    }
-}
-
-void mainWindow::on_zone7_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 7 checked";
-        zone[7]=1;
-        zone7=true;
-    }
-    else{
-        std::cout << "zone 7 unchecked";
-        zone[7]=0;
-        zone7=false;
-    }
-}
-
-void mainWindow::on_zone8_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 8 checked";
-        zone[8]=1;
-        zone8=true;
-    }
-    else{
-        std::cout << "zone 8 unchecked";
-        zone[8]=0;
-        zone8=false;
-    }
-}
-
-void mainWindow::on_zone9_toggled(bool checked) {
-    if(checked){
-        std::cout << "zone 9 checked";
-        zone[9]=1;
-        zone9=true;
-    }
-    else{
-        std::cout << "zone 9 unchecked";
-        zone[9]=0;
-        zone9=false;
-    }
-}
-//checks or unchecks all zones
 void mainWindow::on_zone10_toggled(bool checked) {
-    if(checked){
-        for(int i =0; i <10;i++){
-        zone[i]=1;
+    for (const auto &zone : ZONES) {
+        if (auto *cb = findChild<QCheckBox *>(zone.widgetName)) {
+            cb->setChecked(checked);
         }
     }
-    else{
-        //unchecks everything
-        for(int i =0; i <10;i++){
-            zone[i]=0;
-        }
-        this->on_zone1_toggled(zone1);
-        this->on_zone2_toggled(zone2);
-        this->on_zone3_toggled(zone3);
-        this->on_zone4_toggled(zone4);
-        this->on_zone5_toggled(zone5);
-        this->on_zone6_toggled(zone6);
-        this->on_zone7_toggled(zone7);
-        this->on_zone8_toggled(zone8);
-        this->on_zone9_toggled(zone9);
-        this->on_zone0_toggled(zone0);
-
-
-    }
 }
-void mainWindow::on_zone0_toggled(bool checked){
-    if(checked){
-        std::cout << "zone 0 checked";
-        zone[0]=1;
-        zone0=true;
-    }
-    else{
-        std::cout << "zone 0 unchecked";
-        zone[0]=0;
-        zone0=false;
-    }
-}
-//when checkin button is clicked
+
 void mainWindow::on_checkinButton_clicked() {
-    //make sure it is connected
-    if(!database->connected()){
-        ui->statusbar->showMessage("Error Not Connected to Database");
+    if (!database->connected()) {
+        ui->statusbar->showMessage("Error: Not connected to database");
         return;
     }
-    //goes thru all zones to properly send the query for only the ones wanted
-    for(int i = 0; i < 11; i++) {
-        std::vector<std::string> Bindvalue{1};
-        Bindvalue[0] = std::to_string(i);
-        if(zone[i] == 1){
-            if (i == 10){Bindvalue[0] = "4.5";} //specifique for new zone
-            database->prepareStatement("UPDATE assets set assigned_to = null, location_id = 0 where _snipeit_zone_4 = ?;");
-            database->prepareBind(Bindvalue);
-            database->executeStatement();
-            database->prepareStatement("UPDATE assets set status_id = 2 where _snipeit_zone_4 = ?;");
-            database->prepareBind(Bindvalue);
-            database->executeStatement();
-        }
-        else{
-            continue;
-        }
+
+    for (const auto &zone : ZONES) {
+        if (!m_zoneSelected[zone.index]) continue;
+
+        database->prepareStatement(SQL_CHECKIN_CLEAR);
+        database->prepareBind({zone.dbValue});
+        database->executeStatement();
+
+        database->prepareStatement(SQL_CHECKIN_STATUS);
+        database->prepareBind({zone.dbValue});
+        database->executeStatement();
     }
+
+    ui->statusbar->showMessage("Check-in completed", 5000);
 }
 
-
-//same principle as checkin
 void mainWindow::on_checkoutButton_clicked() {
-    if(!database->connected()){
-        ui->statusbar->showMessage("Error Not Connected to Database");
+    if (!database->connected()) {
+        ui->statusbar->showMessage("Error: Not connected to database");
         return;
     }
+
     bool first = true;
-   for(int i = 0; i< 11; i++){
-       if (zone[i] == 1){
-           std::vector<std::string> Bindvalue(1);  // Creates a vector with 1 empty string
-           std::vector<std::string> toBeBinded(3); // Creates a vector with 3 empty strings
-           toBeBinded[0] = std::to_string(i+4);
-           toBeBinded[1]=toBeBinded[0];
-           toBeBinded[2] = std::to_string(i);
-           Bindvalue[0] = toBeBinded[2];
-           if (i == 10)
-           {
-               toBeBinded[0] = "23";
-               toBeBinded[1]=toBeBinded[0];
-               toBeBinded[2] = "4.5";
-               Bindvalue[0] = toBeBinded[2];
-           }
+    for (const auto &zone : ZONES) {
+        if (!m_zoneSelected[zone.index]) continue;
 
-           database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
-           database->prepareBind(toBeBinded);
-           database->executeStatement();
-           database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?;");
-           database->prepareBind(Bindvalue);
-           database->executeStatement();
-           //because of weird bug that im not sure where it comes from try it without and you will see
-           if (first){
-               database->prepareStatement("update assets set assigned_to = ?, location_id = ? where _snipeit_zone_4 = ?;");
-               database->prepareBind(toBeBinded);
-               database->executeStatement();
-               database->prepareStatement("UPDATE assets set status_id = 5 where _snipeit_zone_4 = ?;");
-               database->prepareBind(Bindvalue);
-               database->executeStatement();
-           }
-           first =false;
-           continue;
-       }
-   }
+        std::string locId = std::to_string(zone.locationId);
 
+        database->prepareStatement(SQL_CHECKOUT_ASSIGN);
+        database->prepareBind({locId, locId, zone.dbValue});
+        database->executeStatement();
 
+        database->prepareStatement(SQL_CHECKOUT_STATUS);
+        database->prepareBind({zone.dbValue});
+        database->executeStatement();
 
+        // Workaround: first zone checkout must execute twice due to a known bug
+        // where the first prepared statement execution doesn't take effect
+        if (first) {
+            database->prepareStatement(SQL_CHECKOUT_ASSIGN);
+            database->prepareBind({locId, locId, zone.dbValue});
+            database->executeStatement();
+
+            database->prepareStatement(SQL_CHECKOUT_STATUS);
+            database->prepareBind({zone.dbValue});
+            database->executeStatement();
+        }
+        first = false;
+    }
+
+    ui->statusbar->showMessage("Check-out completed", 5000);
 }
-
-

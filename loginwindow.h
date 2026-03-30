@@ -17,23 +17,21 @@ Q_OBJECT
 
 public:
     explicit loginwindow(QWidget *parent = nullptr);
-
     ~loginwindow() override;
 
 private:
     Ui::loginwindow *ui;
-    DBController* DB;
-    void delay(float n);
+    DBController *DB = nullptr;
+
 public slots:
-    //fonction for wmit from mainwindow to receive db
-    void receiveDB(DBController* DB);
+    void receiveDB(DBController *DB);
+
 private slots:
     void on_connectButton_clicked();
     void on_cancelButton_clicked();
+
 signals:
-    //signal to tell mainwindow Login is closed
     void loginClosed();
 };
-
 
 #endif //INVENTORYSYSTEM_LOGINWINDOW_H

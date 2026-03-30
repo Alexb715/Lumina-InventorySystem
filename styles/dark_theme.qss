@@ -1,0 +1,199 @@
+/* ==========================================================
+   Lumina Inventory System — Dark Theme (Catppuccin Mocha)
+   ========================================================== */
+
+/* --- Base --- */
+QMainWindow {
+    background-color: #1e1e2e;
+}
+
+QWidget {
+    color: #cdd6f4;
+    background-color: #1e1e2e;
+    font-family: "Segoe UI", "SF Pro Display", "Cantarell", sans-serif;
+    font-size: 14px;
+}
+
+/* --- Menu Bar --- */
+QMenuBar {
+    background-color: #181825;
+    color: #cdd6f4;
+    border-bottom: 1px solid #313244;
+    padding: 2px 0px;
+}
+
+QMenuBar::item {
+    padding: 6px 12px;
+    border-radius: 4px;
+    margin: 2px 4px;
+}
+
+QMenuBar::item:selected {
+    background-color: #45475a;
+}
+
+QMenu {
+    background-color: #2d2d44;
+    border: 1px solid #45475a;
+    border-radius: 6px;
+    padding: 4px;
+}
+
+QMenu::item {
+    padding: 8px 24px;
+    border-radius: 4px;
+}
+
+QMenu::item:selected {
+    background-color: #89b4fa;
+    color: #1e1e2e;
+}
+
+/* --- Status Bar --- */
+QStatusBar {
+    background-color: #181825;
+    color: #a6adc8;
+    font-size: 12px;
+    border-top: 1px solid #313244;
+    padding: 4px 8px;
+}
+
+/* --- Checkboxes --- */
+QCheckBox {
+    spacing: 10px;
+    font-size: 15px;
+    padding: 6px 4px;
+}
+
+QCheckBox::indicator {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid #45475a;
+    background-color: #2d2d44;
+}
+
+QCheckBox::indicator:hover {
+    border-color: #89b4fa;
+    background-color: #363654;
+}
+
+QCheckBox::indicator:checked {
+    background-color: #89b4fa;
+    border-color: #89b4fa;
+    image: none;
+}
+
+QCheckBox::indicator:checked:hover {
+    background-color: #b4d0fb;
+    border-color: #b4d0fb;
+}
+
+/* --- Buttons (generic) --- */
+QPushButton {
+    background-color: #89b4fa;
+    color: #1e1e2e;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: bold;
+    min-height: 20px;
+}
+
+QPushButton:hover {
+    background-color: #b4d0fb;
+}
+
+QPushButton:pressed {
+    background-color: #74a8f7;
+}
+
+QPushButton:disabled {
+    background-color: #45475a;
+    color: #6c7086;
+}
+
+/* --- CheckOut button (amber) --- */
+QPushButton#checkoutButton {
+    background-color: #f9e2af;
+    color: #1e1e2e;
+}
+
+QPushButton#checkoutButton:hover {
+    background-color: #fbecc7;
+}
+
+QPushButton#checkoutButton:pressed {
+    background-color: #f5d48a;
+}
+
+QPushButton#checkoutButton:disabled {
+    background-color: #45475a;
+    color: #6c7086;
+}
+
+/* --- CheckIn button (green) --- */
+QPushButton#checkinButton {
+    background-color: #a6e3a1;
+    color: #1e1e2e;
+}
+
+QPushButton#checkinButton:hover {
+    background-color: #c1eebe;
+}
+
+QPushButton#checkinButton:pressed {
+    background-color: #8ad886;
+}
+
+QPushButton#checkinButton:disabled {
+    background-color: #45475a;
+    color: #6c7086;
+}
+
+/* --- Connect button (login window) --- */
+QPushButton#connectButton {
+    background-color: #89b4fa;
+    color: #1e1e2e;
+}
+
+/* --- Cancel button (login window) --- */
+QPushButton#cancelButton {
+    background-color: #45475a;
+    color: #cdd6f4;
+}
+
+QPushButton#cancelButton:hover {
+    background-color: #585b70;
+}
+
+QPushButton#cancelButton:pressed {
+    background-color: #3b3d52;
+}
+
+/* --- Line Edits --- */
+QLineEdit {
+    background-color: #2d2d44;
+    border: 2px solid #45475a;
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: #cdd6f4;
+    font-size: 14px;
+    selection-background-color: #89b4fa;
+    selection-color: #1e1e2e;
+}
+
+QLineEdit:focus {
+    border-color: #89b4fa;
+}
+
+QLineEdit:hover {
+    border-color: #585b70;
+}
+
+/* --- Labels --- */
+QLabel {
+    background-color: transparent;
+    font-size: 14px;
+}
