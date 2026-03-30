@@ -22,7 +22,7 @@ VIAddVersionKey "FileDescription" "Lumina Inventory System Installer"
 VIAddVersionKey "LegalCopyright" "Alexandre Beaulieu"
 
 ; --- UI ---
-!define MUI_ICON "icons\lumina_256.png"
+!define MUI_ICON "icons\lumina.ico"
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TITLE "Lumina Inventory System ${VERSION} Setup"
 !define MUI_WELCOMEPAGE_TEXT "This will install Lumina Inventory System ${VERSION} on your computer.$\r$\n$\r$\nClick Next to continue."

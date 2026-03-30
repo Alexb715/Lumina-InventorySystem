@@ -134,6 +134,12 @@ jobs:
           windeployqt package\InventorySystem.exe
           copy icons\lumina_256.png package\lumina.png
 
+      - name: Create ICO from PNG
+        shell: pwsh
+        run: |
+          choco install imagemagick -y
+          magick icons\lumina_256.png -define icon:auto-resize=256,128,64,48,32,16 icons\lumina.ico
+
       - name: Create installer with NSIS
         shell: pwsh
         run: |
@@ -147,7 +153,7 @@ jobs:
           path: LuminaInventorySystem-Setup.exe
 
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-15-intel
     steps:
       - uses: actions/checkout@v4
 

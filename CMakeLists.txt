@@ -8,10 +8,15 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 # --- Platform-Specific Compiler Flags ---
-if(UNIX)
-    # Compiler flags for Linux and macOS
+if(UNIX AND NOT APPLE)
+    # Linux: aggressive optimization for local builds
     set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -flto -march=native")
     set(CMAKE_C_FLAGS_RELEASE "-O3 -DNDEBUG -flto -march=native")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g")
+    set(CMAKE_C_FLAGS_DEBUG "-g")
+elseif(APPLE)
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-O2 -DNDEBUG")
     set(CMAKE_CXX_FLAGS_DEBUG "-g")
     set(CMAKE_C_FLAGS_DEBUG "-g")
 endif()
