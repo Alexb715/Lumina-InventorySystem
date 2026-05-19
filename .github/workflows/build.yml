@@ -82,12 +82,16 @@ jobs:
           target: 'desktop'
           arch: 'win64_msvc2019_64'
           modules: 'qtnetworkauth'
-          tools: 'tools_openssl_x64'
 
       - name: Install MySQL
         shell: pwsh
         run: |
           choco install mysql -y
+
+      - name: Install OpenSSL 1.1 (for Qt5 Network HTTPS)
+        shell: pwsh
+        run: |
+          choco install openssl --version=1.1.1.2100 -y --no-progress
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
@@ -147,14 +151,15 @@ jobs:
           }
 
           # OpenSSL 1.1 DLLs needed by Qt5Network.dll (Qt 5.15 HTTPS)
-          $opensslDir = Join-Path $env:IQTA_TOOLS "OpenSSL\Win_x64\bin"
+          # Installed by chocolatey openssl 1.1.1.2100 (Shining Light Productions)
+          $openssl11Root = "C:\Program Files\OpenSSL-Win64"
           foreach ($dll in @("libssl-1_1-x64.dll", "libcrypto-1_1-x64.dll")) {
-            $src = Join-Path $opensslDir $dll
-            if (Test-Path $src) {
-              Write-Host "Copying $dll from $opensslDir"
-              Copy-Item $src package\
+            $found = Get-ChildItem -Path $openssl11Root -Recurse -Filter $dll -ErrorAction SilentlyContinue | Select-Object -First 1
+            if ($found) {
+              Write-Host "Copying $dll from $($found.DirectoryName)"
+              Copy-Item $found.FullName package\
             } else {
-              $missing += "$dll (expected at $opensslDir)"
+              $missing += "$dll (searched under $openssl11Root)"
             }
           }
 
