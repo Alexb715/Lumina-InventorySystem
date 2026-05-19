@@ -82,6 +82,7 @@ jobs:
           target: 'desktop'
           arch: 'win64_msvc2019_64'
           modules: 'qtnetworkauth'
+          tools: 'tools_openssl_x64'
 
       - name: Install MySQL
         shell: pwsh
@@ -124,23 +125,46 @@ jobs:
 
       - name: Package
         shell: pwsh
+        env:
+          MYSQL_BIN: ${{ steps.mysql.outputs.bin }}
+          MYSQL_DLL: ${{ steps.mysql.outputs.dll }}
         run: |
           mkdir package
-          copy build\InventorySystem.exe package\
-          copy "${{ steps.mysql.outputs.dll }}" package\
-          # Bundle OpenSSL DLLs required by libmysql.dll
-          $mysqlBin = "${{ steps.mysql.outputs.bin }}"
+          Copy-Item build\InventorySystem.exe package\
+          Copy-Item "$env:MYSQL_DLL" package\
+
+          $missing = @()
+
+          # OpenSSL 3 DLLs needed by libmysql.dll (MySQL 8.0+)
           foreach ($dll in @("libssl-3-x64.dll", "libcrypto-3-x64.dll")) {
-            $src = Join-Path $mysqlBin $dll
+            $src = Join-Path $env:MYSQL_BIN $dll
             if (Test-Path $src) {
-              Write-Host "Copying $dll from MySQL bin"
+              Write-Host "Copying $dll from $env:MYSQL_BIN"
               Copy-Item $src package\
             } else {
-              Write-Host "WARNING: $dll not found in $mysqlBin"
+              $missing += "$dll (expected at $env:MYSQL_BIN)"
             }
           }
+
+          # OpenSSL 1.1 DLLs needed by Qt5Network.dll (Qt 5.15 HTTPS)
+          $opensslDir = Join-Path $env:IQTA_TOOLS "OpenSSL\Win_x64\bin"
+          foreach ($dll in @("libssl-1_1-x64.dll", "libcrypto-1_1-x64.dll")) {
+            $src = Join-Path $opensslDir $dll
+            if (Test-Path $src) {
+              Write-Host "Copying $dll from $opensslDir"
+              Copy-Item $src package\
+            } else {
+              $missing += "$dll (expected at $opensslDir)"
+            }
+          }
+
+          if ($missing.Count -gt 0) {
+            Write-Error "Missing required DLLs:`n  $($missing -join "`n  ")"
+            exit 1
+          }
+
           windeployqt package\InventorySystem.exe
-          copy icons\lumina_256.png package\lumina.png
+          Copy-Item icons\lumina_256.png package\lumina.png
 
       - name: Create ICO from PNG
         shell: pwsh
