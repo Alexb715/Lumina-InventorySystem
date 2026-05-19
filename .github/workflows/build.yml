@@ -88,10 +88,24 @@ jobs:
         run: |
           choco install mysql -y
 
-      - name: Install OpenSSL 1.1 (for Qt5 Network HTTPS)
+      - name: Download OpenSSL 1.1 (for Qt5 Network HTTPS)
         shell: pwsh
         run: |
-          choco install openssl --version=1.1.1.2100 -y --no-progress
+          $url = "https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-1.1.1w.zip"
+          $zipPath = Join-Path $env:RUNNER_TEMP "openssl-1_1.zip"
+          $extractPath = Join-Path $env:RUNNER_TEMP "openssl-1_1"
+          Write-Host "Downloading OpenSSL 1.1.1w from $url"
+          Invoke-WebRequest -Uri $url -OutFile $zipPath -UseBasicParsing
+          Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+          $opensslBin = Join-Path $extractPath "openssl-1.1\x64\bin"
+          if (-not (Test-Path (Join-Path $opensslBin "libssl-1_1-x64.dll"))) {
+            Write-Host "Expected DLL not at $opensslBin; listing extracted tree:"
+            Get-ChildItem -Path $extractPath -Recurse -Filter "libssl-1_1-x64.dll" | Format-Table FullName
+            Write-Error "OpenSSL 1.1 DLL not found after extraction"
+            exit 1
+          }
+          "OPENSSL_1_1_BIN=$opensslBin" >> $env:GITHUB_ENV
+          Write-Host "OpenSSL 1.1 bin set: $opensslBin"
 
       - name: Setup MSVC
         uses: ilammy/msvc-dev-cmd@v1
@@ -151,15 +165,14 @@ jobs:
           }
 
           # OpenSSL 1.1 DLLs needed by Qt5Network.dll (Qt 5.15 HTTPS)
-          # Installed by chocolatey openssl 1.1.1.2100 (Shining Light Productions)
-          $openssl11Root = "C:\Program Files\OpenSSL-Win64"
+          # Provided by the "Download OpenSSL 1.1" step (FireDaemon distribution)
           foreach ($dll in @("libssl-1_1-x64.dll", "libcrypto-1_1-x64.dll")) {
-            $found = Get-ChildItem -Path $openssl11Root -Recurse -Filter $dll -ErrorAction SilentlyContinue | Select-Object -First 1
-            if ($found) {
-              Write-Host "Copying $dll from $($found.DirectoryName)"
-              Copy-Item $found.FullName package\
+            $src = Join-Path $env:OPENSSL_1_1_BIN $dll
+            if (Test-Path $src) {
+              Write-Host "Copying $dll from $env:OPENSSL_1_1_BIN"
+              Copy-Item $src package\
             } else {
-              $missing += "$dll (searched under $openssl11Root)"
+              $missing += "$dll (expected at $env:OPENSSL_1_1_BIN)"
             }
           }
 
